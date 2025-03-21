@@ -1,0 +1,93 @@
+if([SystemInfosProvider.MainGPUTemp] <= 40,'30',if([SystemInfosProvider.MainGPUTemp] >= 80,        '139', format(40 + ([SystemInfosProvider.MainGPUTemp] - 40) * (60 / 40) - 14, '0'))) + ','+
+
+if([DataCorePlugin.GameRunning]= 1, if(isincreasing(2000, [EngineIgnitionOn]), 160, format([SpeedMph],'0')),0)+ ','+
+
+if([DataCorePlugin.GameRunning]= 1, if(isincreasing(2000, [EngineIgnitionOn]), 8000, format(if([Rpms] < 200, 0, [Rpms] * 7500 / [MaxRpm]), '0')),0) + ',' +
+
+format([FuelPercent],'0')+ ','+
+
+format([SystemInfosProvider.MainCPUTemp],'00') + ','+
+
+format([Gear],'P') + ','+
+
+format([DataCorePlugin.CurrentDateTime], 'hh') + ','+
+
+format([DataCorePlugin.CurrentDateTime], 'mm') + ',' +
+
+('1') + ',' + 
+
+if(isincreasing(4000, [EngineIgnitionOn]), 1, 0 ) + ',' +
+
+'255' + ',' +
+
+if([DataCorePlugin.CurrentGame]='ATS',
+    if([GameRawData.TruckValues.CurrentValues.LightsValues.BeamHigh]=true, '1', '0'),
+    format([CarSettings_RPMShiftLight1],'0')) + ',' +
+
+if([DataCorePlugin.CurrentGame]='ATS',
+   if(isnull([GameRawData.TruckValues.CurrentValues.LightsValues.BeamLow],false)=true,'1','0'),
+   if([DataCorePlugin.CurrentGame]='AssettoCorsa',
+      if(isnull([UDPConnectorDataPlugin.HeadlightsActive],false)=true,'1','0'),
+      '0')
+) + ','+
+      
+if([DataCorePlugin.CurrentGame]='ATS',
+    if([GameRawData.TruckValues.CurrentValues.MotorValues.BrakeValues.MotorBrake]=true, '1', '0'),'0')+ ','+
+    
+if([DataCorePlugin.CurrentGame]='ATS',
+   if(blink('truckright',340,[GameRawData.TruckValues.CurrentValues.LightsValues.BlinkerRightActive]),'1','0'),
+   if(isnull([UDPConnectorDataPlugin.TurningRightLights],false)=false,
+      '0',if([UDPConnectorDataPlugin.HazardLights]=true,
+      '0',if(blink('right',340,[UDPConnectorDataPlugin.TurningRightLights]),'1','0'))))+ ','+
+if([DataCorePlugin.CurrentGame]='ATS',
+   if(blink('truckleft',340,[GameRawData.TruckValues.CurrentValues.LightsValues.BlinkerLeftActive]),'1','0'),
+   if(isnull([UDPConnectorDataPlugin.TurningLeftLights],false)=false,
+      '0',if([UDPConnectorDataPlugin.HazardLights]=true,
+      '0',if(blink('left',340,[UDPConnectorDataPlugin.TurningLeftLights]),'1','0'))))+ ','+
+      
+if([DataCorePlugin.CurrentGame]='ATS',
+   if(blink('truckhazard',340,[TruckSimulatorPlugin.Lights.HazardWarningOn]=true),'1','0'),
+   if(isnull([UDPConnectorDataPlugin.HazardLights],false)=false,'0',
+   if(blink('hazard',340,[UDPConnectorDataPlugin.HazardLights]),'1','0'))) +','+
+   
+if([DataCorePlugin.CurrentGame]='ATS',
+    if([GameRawData.TruckValues.CurrentValues.MotorValues.BrakeValues.ParkingBrake]=true, '1', '0'),format(if([JoystickPlugin.RASTP_HANDBRAKE_RZ]>10000.1,1,0),'0'))+ ','+
+   
+
+if([DataCorePlugin.CurrentGame]='ATS',
+   if(isnull([InputStatus.JoystickPlugin.vJoy_Device_B43],true)=1,
+      [MediaInfo.Artist]+' - '+[MediaInfo.Title],
+      if(isnull([InputStatus.JoystickPlugin.vJoy_Device_B44],true)=1,
+         format([InstantConsumption_MPG_US],'0.0 MPG INSTANTANEOUS'),
+         if(isnull([InputStatus.JoystickPlugin.vJoy_Device_B45],true)=1,
+            format([TruckSimulatorPlugin.Drivetrain.FuelRangeStable],'0 MILES TO EMPTY TANK'),''))),
+   if(isnull([InputStatus.JoystickPlugin.Chave_de_Seta_B03],true)=1,
+      [MediaInfo.Artist]+' - '+[MediaInfo.Title],
+      format([InstantConsumption_MPG_US],'0.0 MPG INSTANTANEOUS')))+ ','+
+'0'
+         
+
+Option 1 
+   
+
+if([InputStatus.JoystickPlugin.Chave_de_Seta_B03]=1, [MediaInfo.Artist]+' - '+[MediaInfo.Title], format([DataCorePlugin.CurrentDateTime],'hh:mm:ss MM/dd/yyyy'))+ ','+
+'0'
+
+
+
+
+Option2 for display
+
+if(isnull([InputStatus.JoystickPlugin.Chave_de_Seta_B03],true)=1, [MediaInfo.Artist]+' - '+[MediaInfo.Title], format([InstantConsumption_MPG_US],'00.0 MPG INSTANT FUEL'))+ ','+
+
+Option 3
+if([DataCorePlugin.CurrentGame]='ATS',
+   if(isnull([InputStatus.JoystickPlugin.vJoy_Device_B43],true)=1,
+      [MediaInfo.Artist]+' - '+[MediaInfo.Title],
+      if(isnull([InputStatus.JoystickPlugin.vJoy_Device_B44],true)=1,
+         format([InstantConsumption_MPG_US],'0.0 MPG INSTANTANEOUS'),
+         if(isnull([InputStatus.JoystickPlugin.vJoy_Device_B45],true)=1,
+            format([GameRawData.TruckValues.CurrentValues.DashboardValues.FuelValue.Range],'0 MILES TO EMPTY TANK'),''))),
+   if(isnull([InputStatus.JoystickPlugin.Chave_de_Seta_B03],true)=1,
+      [MediaInfo.Artist]+' - '+[MediaInfo.Title],
+      format([InstantConsumption_MPG_US],'0.0 MPG INSTANTANEOUS')))+ ','+
